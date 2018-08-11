@@ -40,12 +40,6 @@ dependencies {
 
     // FFmpegMediaMetadataRetriever
     implementation "com.github.wseemann:FFmpegMediaMetadataRetriever:$version_ffmpeg"
-//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi:$version_ffmpeg"
-//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi-v7a:$version_ffmpeg"
-//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-x86:$version_ffmpeg"
-//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-mips:$version_ffmpeg"
-//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-x86_64:$version_ffmpeg"
-//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-arm64-v8a:$version_ffmpeg"
 
     // Glide
     implementation "com.github.bumptech.glide:glide:$version_glide"
