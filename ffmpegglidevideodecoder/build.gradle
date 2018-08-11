@@ -1,0 +1,56 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+ext {
+    version_ffmpeg = '1.0.14'
+    version_glide = '4.7.1'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // FFmpegMediaMetadataRetriever
+    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever:$version_ffmpeg"
+//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi:$version_ffmpeg"
+//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi-v7a:$version_ffmpeg"
+//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-x86:$version_ffmpeg"
+//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-mips:$version_ffmpeg"
+//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-x86_64:$version_ffmpeg"
+//    implementation "com.github.wseemann:FFmpegMediaMetadataRetriever-arm64-v8a:$version_ffmpeg"
+
+    // Glide
+    implementation "com.github.bumptech.glide:glide:$version_glide"
+    kapt "com.github.bumptech.glide:compiler:$version_glide"
+}
+repositories {
+    mavenCentral()
+}
