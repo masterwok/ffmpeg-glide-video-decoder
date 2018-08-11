@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Demo FFmpeg Glide Video Decoder</string>
     <string name="title_activity_main">Demo</string>
+    <string name="demo_image_view">Demo Image View</string>
 </resources>

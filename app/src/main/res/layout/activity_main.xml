@@ -10,6 +10,7 @@
     <ImageView
         android:id="@+id/image_view_demo"
         android:layout_width="400dp"
-        android:layout_height="400dp"/>
+        android:layout_height="400dp"
+        android:contentDescription="@string/demo_image_view"/>
 
 </LinearLayout>

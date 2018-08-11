@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.masterwok.demoffmpegglidevideodecoder.R
 import com.masterwok.demoffmpegglidevideodecoder.glide.GlideApp
 
@@ -20,14 +21,14 @@ class MainActivity : AppCompatActivity() {
         demoVideoDecoder()
     }
 
-    private fun demoVideoDecoder() {
-
-        GlideApp.with(this)
-                .load(Uri.parse("https://github.com/bumptech/glide/raw/master/static/glide_logo.png"))
-//                .centerCrop()
-//                .signature(ObjectKey("${torrent.isBitmapReady}:${torrent.isFinished}"))
-                .into(imageViewDemo)
-    }
+    private fun demoVideoDecoder() = GlideApp
+            .with(this)
+            // TODO: This needs to be a video.
+            .load(Uri.parse("https://github.com/masterwok/ffmpeg-glide-resource-decoder/blob/master/app/images/glide_logo.png"))
+            .centerCrop()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .into(imageViewDemo)
 
 
     private fun bindViewComponents() {

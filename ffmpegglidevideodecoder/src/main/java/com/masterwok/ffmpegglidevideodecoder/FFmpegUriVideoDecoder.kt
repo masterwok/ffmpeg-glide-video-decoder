@@ -50,6 +50,7 @@ class FFmpegUriVideoDecoder constructor(
         val bitmap: Bitmap?
 
         try {
+            // TODO: This won't always be a valid file descriptor..fix this.
             val dataSourceFileDescriptor = context
                     .contentResolver
                     .openFileDescriptor(source, "r")
