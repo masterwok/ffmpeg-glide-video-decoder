@@ -12,9 +12,9 @@ class GlideModule : AppGlideModule() {
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
         val requestOptions = RequestOptions().apply {
-            // Get frame at 10% into the media. Default 3%
+            // Get frame at 10% into the media (default 3%)
             set(FFmpegVideoDecoder.PERCENTAGE_DURATION, 0.10F)
-            // OR get frame at some time (micro-seconds).
+            // OR get frame at some time (micro-seconds)
             // set(FFmpegVideoDecoder.FRAME_AT_TIME, 1000 * 1000 * 5)
         }
 
