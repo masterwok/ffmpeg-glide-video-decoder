@@ -1,5 +1,5 @@
 # ffmpeg-glide-video-decoder
-A Glide resource decoder powered by [FFmpegMediaMetadataRetriever](https://github.com/wseemann/FFmpegMediaMetadataRetriever). This resource decoder can be registered in AppGlideModule to load video bitmaps when the standard Android MediaMetadataRetriever fails.
+A [Glide](https://github.com/bumptech/glide) resource decoder powered by [FFmpegMediaMetadataRetriever](https://github.com/wseemann/FFmpegMediaMetadataRetriever). This resource decoder can be registered in AppGlideModule to load video bitmaps when the standard Android MediaMetadataRetriever fails.
 
 
 ## Usage
