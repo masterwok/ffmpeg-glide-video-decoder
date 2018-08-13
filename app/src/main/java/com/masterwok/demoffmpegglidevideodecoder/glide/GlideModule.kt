@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
-import com.masterwok.ffmpegglidevideodecoder.FFmpegUriVideoDecoder
+import com.masterwok.ffmpegglidevideodecoder.FFmpegVideoDecoder
 
 
 @GlideModule()
@@ -19,7 +19,7 @@ class GlideModule : AppGlideModule() {
                 Registry.BUCKET_BITMAP
                 , Uri::class.java
                 , Bitmap::class.java
-                , FFmpegUriVideoDecoder(glide.bitmapPool)
+                , FFmpegVideoDecoder(glide.bitmapPool)
         )
 
         super.registerComponents(context, glide, registry)

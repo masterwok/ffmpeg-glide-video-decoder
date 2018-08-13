@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import com.bumptech.glide.load.Option
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.ResourceDecoder
 import com.bumptech.glide.load.engine.Resource
@@ -12,11 +13,35 @@ import com.bumptech.glide.load.resource.bitmap.BitmapResource
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import wseemann.media.FFmpegMediaMetadataRetriever
 
-class FFmpegUriVideoDecoder constructor(
+
+/**
+ * A Glide video decoder that uses FFmpegMediaMetadataRetriever to get bitmaps.
+ * Consider using this decoder when Android's MediaMetadataRetriever fails to retrieve
+ * a Bitmap. Set [@see PERCENTAGE_DURATION] to get a frame for some time a a given
+ * percentage of the media duration. Set [@see FRAME_AT_TIME] (micro-seconds) to get a
+ * frame at some time (micro-seconds).
+ */
+class FFmpegVideoDecoder constructor(
         private val bitmapPool: BitmapPool
 ) : ResourceDecoder<Uri, Bitmap> {
     companion object {
-        const val Tag = "FFmpegUriVideoDecoder"
+        const val Tag = "FFmpegVideoDecoder"
+
+        /**
+         * Get a frame for some time at a given percentage of the duration.
+         */
+        val PERCENTAGE_DURATION: Option<Float> = Option.memory(
+                "com.masterwok.ffmpegglidevideodecoder.PercentageDuration"
+                , 0.03F
+        )
+
+        /**
+         * Get a frame at some time (micro-seconds).
+         */
+        val FRAME_AT_TIME: Option<Long> = Option.memory(
+                "com.masterwok.ffmpegglidevideodecoder.FrameAtTime"
+                , -1
+        )
     }
 
     private fun FFmpegMediaMetadataRetriever.decodeOriginalFrame(
@@ -27,6 +52,9 @@ class FFmpegUriVideoDecoder constructor(
             , frameOption
     )
 
+    private fun FFmpegMediaMetadataRetriever.duration(): Long =
+            extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+
     private fun FFmpegMediaMetadataRetriever.originalWidth(): Int =
             extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH).toInt()
 
@@ -36,11 +64,15 @@ class FFmpegUriVideoDecoder constructor(
     private fun FFmpegMediaMetadataRetriever.orientation(): Int =
             extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION).toInt()
 
+    private fun FFmpegMediaMetadataRetriever.percentagePosition(percentagePosition: Float): Long =
+            (duration() * 1000 * percentagePosition).toLong()
 
     override fun handles(source: Uri, options: Options): Boolean = true
 
     override fun decode(source: Uri, outWidth: Int, outHeight: Int, options: Options): Resource<Bitmap>? {
         val retriever = FFmpegMediaMetadataRetriever()
+        val percentagePosition = options.get(PERCENTAGE_DURATION)!!
+        val frameAtTime = options.get(FRAME_AT_TIME)!!
         val downSampleStrategy = options.get(DownsampleStrategy.OPTION)
                 ?: DownsampleStrategy.NONE
 
@@ -51,6 +83,7 @@ class FFmpegUriVideoDecoder constructor(
 
             bitmap = decodeFrame(
                     retriever
+                    , if (frameAtTime >= 0) frameAtTime else retriever.percentagePosition(percentagePosition)
                     , FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC
                     , outWidth
                     , outHeight
@@ -66,6 +99,7 @@ class FFmpegUriVideoDecoder constructor(
 
     private fun decodeFrame(
             retriever: FFmpegMediaMetadataRetriever
+            , timeUs: Long
             , frameOption: Int
             , outWidth: Int
             , outHeight: Int
@@ -80,6 +114,7 @@ class FFmpegUriVideoDecoder constructor(
         ) {
             result = decodeScaledFrame(
                     retriever
+                    , timeUs
                     , frameOption
                     , outWidth
                     , outHeight
@@ -87,11 +122,12 @@ class FFmpegUriVideoDecoder constructor(
             )
         }
 
-        return result ?: retriever.decodeOriginalFrame(-1, frameOption)
+        return result ?: retriever.decodeOriginalFrame(timeUs, frameOption)
     }
 
     private fun decodeScaledFrame(
             retriever: FFmpegMediaMetadataRetriever
+            , timeUs: Long
             , frameOption: Int
             , outWidth: Int
             , outHeight: Int
@@ -119,7 +155,7 @@ class FFmpegUriVideoDecoder constructor(
             val decodeHeight = Math.round(scaleFactor * originalHeight)
 
             return retriever.getScaledFrameAtTime(
-                    -1
+                    timeUs
                     , frameOption
                     , decodeWidth
                     , decodeHeight
