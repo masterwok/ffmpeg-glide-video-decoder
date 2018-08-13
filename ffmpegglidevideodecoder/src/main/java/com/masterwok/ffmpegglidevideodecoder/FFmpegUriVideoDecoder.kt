@@ -1,6 +1,5 @@
 package com.masterwok.ffmpegglidevideodecoder
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -14,9 +13,7 @@ import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import wseemann.media.FFmpegMediaMetadataRetriever
 
 class FFmpegUriVideoDecoder constructor(
-        private val context: Context
-        , private val bitmapPool: BitmapPool
-        , private val frameAtDurationPercentage: Float
+        private val bitmapPool: BitmapPool
 ) : ResourceDecoder<Uri, Bitmap> {
     companion object {
         const val Tag = "FFmpegUriVideoDecoder"
@@ -50,20 +47,10 @@ class FFmpegUriVideoDecoder constructor(
         val bitmap: Bitmap?
 
         try {
-            // TODO: This won't always be a valid file descriptor..fix this.
-            val dataSourceFileDescriptor = context
-                    .contentResolver
-                    .openFileDescriptor(source, "r")
-                    ?.fileDescriptor
-                    ?: return null
-
-            retriever.setDataSource(dataSourceFileDescriptor)
-
-            val duration = retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+            retriever.setDataSource(source.toString())
 
             bitmap = decodeFrame(
                     retriever
-                    , (duration * 1000 * frameAtDurationPercentage).toLong()
                     , FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC
                     , outWidth
                     , outHeight
@@ -79,7 +66,6 @@ class FFmpegUriVideoDecoder constructor(
 
     private fun decodeFrame(
             retriever: FFmpegMediaMetadataRetriever
-            , frameTimeMicros: Long
             , frameOption: Int
             , outWidth: Int
             , outHeight: Int
@@ -94,7 +80,6 @@ class FFmpegUriVideoDecoder constructor(
         ) {
             result = decodeScaledFrame(
                     retriever
-                    , frameTimeMicros
                     , frameOption
                     , outWidth
                     , outHeight
@@ -102,12 +87,11 @@ class FFmpegUriVideoDecoder constructor(
             )
         }
 
-        return result ?: retriever.decodeOriginalFrame(frameTimeMicros, frameOption)
+        return result ?: retriever.decodeOriginalFrame(-1, frameOption)
     }
 
     private fun decodeScaledFrame(
             retriever: FFmpegMediaMetadataRetriever
-            , frameTimeMicros: Long
             , frameOption: Int
             , outWidth: Int
             , outHeight: Int
@@ -135,7 +119,7 @@ class FFmpegUriVideoDecoder constructor(
             val decodeHeight = Math.round(scaleFactor * originalHeight)
 
             return retriever.getScaledFrameAtTime(
-                    frameTimeMicros
+                    -1
                     , frameOption
                     , decodeWidth
                     , decodeHeight

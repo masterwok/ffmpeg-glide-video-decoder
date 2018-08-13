@@ -19,7 +19,7 @@ class GlideModule : AppGlideModule() {
                 Registry.BUCKET_BITMAP
                 , Uri::class.java
                 , Bitmap::class.java
-                , FFmpegUriVideoDecoder(context, glide.bitmapPool, 0.03F)
+                , FFmpegUriVideoDecoder(glide.bitmapPool)
         )
 
         super.registerComponents(context, glide, registry)
