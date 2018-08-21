@@ -56,3 +56,6 @@ dependencies {
     implementation 'com.github.masterwok:ffmpeg-glide-video-decoder:1.0.0'
 }
 ```
+
+## Projects using ffmpeg-glide-video-decoder
+- [Bit Cast](https://play.google.com/store/apps/details?id=com.masterwok.bitcast)
